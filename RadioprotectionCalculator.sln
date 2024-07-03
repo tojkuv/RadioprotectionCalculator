@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.0.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34902.84
 MinimumVisualStudioVersion = 16.0.0.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RadioprotectionCalculator", "RadioprotectionCalculator\RadioprotectionCalculator.csproj", "{AC994BB8-31D6-4FEF-B240-D821636CC131}"
 EndProject
@@ -16,18 +16,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Debug|x64.Build.0 = Debug|Any CPU
-		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Debug|x86.Build.0 = Debug|Any CPU
-		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Release|x64.ActiveCfg = Release|Any CPU
-		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Release|x64.Build.0 = Release|Any CPU
-		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Release|x86.ActiveCfg = Release|Any CPU
-		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Release|x86.Build.0 = Release|Any CPU
 		{AC994BB8-31D6-4FEF-B240-D821636CC131}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AC994BB8-31D6-4FEF-B240-D821636CC131}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC994BB8-31D6-4FEF-B240-D821636CC131}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -40,6 +28,18 @@ Global
 		{AC994BB8-31D6-4FEF-B240-D821636CC131}.Release|x64.Build.0 = Release|Any CPU
 		{AC994BB8-31D6-4FEF-B240-D821636CC131}.Release|x86.ActiveCfg = Release|Any CPU
 		{AC994BB8-31D6-4FEF-B240-D821636CC131}.Release|x86.Build.0 = Release|Any CPU
+		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Debug|x64.Build.0 = Debug|Any CPU
+		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Debug|x86.Build.0 = Debug|Any CPU
+		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Release|x64.ActiveCfg = Release|Any CPU
+		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Release|x64.Build.0 = Release|Any CPU
+		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Release|x86.ActiveCfg = Release|Any CPU
+		{C4A5F671-E898-4F93-966E-096DD3180AC0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

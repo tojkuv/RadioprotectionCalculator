@@ -1,6 +1,5 @@
 using MudBlazor.Services;
-using RadioprotectionCalculator.Client.Pages;
-using RadioprotectionCalculator.Components;
+using RadioprotectionCalculator;
 
 var builder = WebApplication.CreateBuilder(args);
 

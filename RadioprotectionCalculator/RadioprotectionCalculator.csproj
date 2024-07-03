@@ -13,6 +13,23 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.*" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.6" />
     <PackageReference Include="MudBlazor" Version="7.0.0" />
+    <PackageReference Include="NodaTime" Version="3.1.11" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\Pages\Error.razor" />
+    <_ContentIncludedByDefault Remove="Components\Pages\Home.razor" />
+    <_ContentIncludedByDefault Remove="Components\Pages\Testing.razor" />
+    <_ContentIncludedByDefault Remove="Components\Pages\Weather.razor" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <AdditionalFiles Include="Pages\Error.razor" />
+    <AdditionalFiles Include="Pages\Home.razor" />
+    <AdditionalFiles Include="Pages\Testing.razor" />
+    <AdditionalFiles Include="Pages\Weather.razor" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,402 @@
+﻿@page "/"
+@rendermode InteractiveAuto
+
+<PageTitle>Isotope Decay</PageTitle>
+<MudContainer Fixed="true">
+    <MudStack Row="true" Justify="Justify.Center">
+        <MudItem>
+            <MudPaper MinWidth="250px" MaxWidth="600px" Class="py-3" Elevation="0">
+                <MudNavMenu>
+                    <MudText Typo="Typo.h6" Class="px-4">Calculators</MudText>
+                    <MudDivider Class="my-2"/>
+                    <MudNavLink Href="/">Isotope Decay</MudNavLink>
+                    <MudNavLink Href="/Counter">Dose Rate & Activity</MudNavLink>
+
+                </MudNavMenu>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem>
+            <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+			<MudTabPanel Text="Decay & Half-Life">
+				<MudPaper MinWidth="600px" Class="pa-4">
+					<MudStack Spacing="@Spacing">
+						<MudStack Row="true" Class="align-center">
+							<h2>Decay & Half-Life</h2>
+							<MudSpacer />
+							<MudSwitch Value="_isIsotopeSelectionVisible" ValueChanged="((bool value) => UpdateIsotopesSwitch(value))" Label="Show Isotopes" Color="Color.Primary" />
+						</MudStack>
+
+						<MudFocusTrap>
+							<MudStack Row="true" Spacing="@Spacing" Class="align-center">
+								<MudSelect Class="flex-auto" Value="@_isotopeDecay.ActivityUnit" Label="Activity Unit" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Filled" Margin="Margin.Dense" ValueChanged="(Units.ActivityUnit value) => UpdateActivityUnit(value)">
+									@foreach (var unit in Enum.GetValues(typeof(Units.ActivityUnit)))
+									{
+										<MudSelectItem Value="@((Units.ActivityUnit)unit)">@unit</MudSelectItem>
+									}
+								</MudSelect>
+								<MudSelect Class="flex-auto" Value="@_isotopeDecay.TimeSpanUnit" Label="Time Unit" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Filled" Margin="Margin.Dense" ValueChanged="(Units.TimeUnit value) => UpdateTimeSpanUnit(value)">
+									@foreach (var unit in Enum.GetValues(typeof(Units.TimeUnit)))
+									{
+										<MudSelectItem Value="@((Units.TimeUnit)unit)">@unit</MudSelectItem>
+									}
+								</MudSelect>
+							</MudStack>
+
+							@if (_isIsotopeSelectionVisible)
+							{
+								<MudStack Row="true" Spacing="@Spacing" Class="align-center">
+									<MudSelect Class="flex-auto" Value="_isotopeDecay.ElementName" Label="Element" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="(string value) => UpdateElement(value)">
+										@foreach (var elementName in IsotopeDecay.Isotopes.Keys)
+										{
+											<MudSelectItem Value="@elementName" />
+										}
+									</MudSelect>
+
+									<MudSelect Class="flex-auto" Value="_isotopeDecay.Isotope.Name" Label="Isotope" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="(string value) => UpdateIsotope(value: value)">
+										@foreach (var isotope in _isotopeDecay.ElementIsotopes)
+										{
+											<MudSelectItem Value="@isotope.Name" />
+										}
+									</MudSelect>
+								</MudStack>
+							}
+
+							<MudTextField T="double?" Value="_halfLife" ValueChanged="(double? value) => UpdateHalfLife(halfLifeChanged: true, value: value)" Label="Half-Life" Placeholder="0.00" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.End" AdornmentText="@_isotopeDecay.TimeSpanUnit.ToString()" Class="flex-auto" />
+
+							<MudNumericField Class="flex-auto" T="double?" Value="_originalActivity" Label="Original Activity" Placeholder="0.00" Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.End" AdornmentText="@_isotopeDecay.ActivityUnit.ToString()" HideSpinButtons="true" ValueChanged="(double? value) => UpdateOriginalActivity(value: value)"></MudNumericField>
+
+							<div class="d-flex flex-row flex-grow-1 gap-2">
+								<MudDatePicker @ref="_originalDatePicker" Date="_originalDate" DateChanged="((DateTime? date) => UpdateOriginalDate(date))" Margin="Margin.Dense" Class="flex-auto" Label="Original Date" Placeholder='@DateTime.Today.ToString("yyyy-MM-dd")' DateFormat="yyyy-MM-dd" AutoClose="true" ShowToolbar="false">
+									<PickerActions>
+										<MudButton Class="mr-auto align-self-start" OnClick="@(() => _originalDatePicker.ClearAsync())">Clear</MudButton>
+										<MudButton OnClick="@(() => _originalDatePicker.CloseAsync(false))">Cancel</MudButton>
+										<MudButton Color="Color.Primary" OnClick="@(() => _originalDatePicker.CloseAsync())">Ok</MudButton>
+									</PickerActions>
+								</MudDatePicker>
+
+								<MudTimePicker @ref="_originalTimePicker" Time="_originalTime" TimeChanged="((TimeSpan? time) => UpdateOriginalTime(time))" Placeholder='@DateTime.Now.TimeOfDay.ToString("hh\\:mm")' AutoClose="true" Label="Original Time" ShowToolbar="false" Margin="Margin.Dense">
+									<PickerActions>
+										<MudButton Class="mr-auto align-self-start" OnClick="@(() => _originalTimePicker.ClearAsync())">Clear</MudButton>
+										<MudButton OnClick="@(() => _originalTimePicker.CloseAsync(false))">Cancel</MudButton>
+										<MudButton Color="Color.Primary" OnClick="@(() => _originalTimePicker.CloseAsync())">Ok</MudButton>
+									</PickerActions>
+								</MudTimePicker>
+							</div>
+
+							<div class="d-flex flex-row flex-grow-1 gap-2">
+								<MudDatePicker @ref="_calculationDatePicker" Margin="Margin.Dense" Date="_calculationDate" DateChanged="((DateTime? date) => UpdateCalculationDate(date))" Class="flex-auto" Label="Calculation Date" Placeholder='@DateTime.Today.ToString("yyyy-MM-dd")' DateFormat="yyyy-MM-dd" AutoClose="true" ShowToolbar="false">
+									<PickerActions>
+										<MudButton Class="mr-auto align-self-start" OnClick="@(() => _calculationDatePicker.ClearAsync())">Clear</MudButton>
+										<MudButton OnClick="@(() => _calculationDatePicker.CloseAsync(false))">Cancel</MudButton>
+										<MudButton Color="Color.Primary" OnClick="@(() => _calculationDatePicker.CloseAsync())">Ok</MudButton>
+									</PickerActions>
+								</MudDatePicker>
+
+								<MudTimePicker @ref="_calculationTimePicker" Time="_calculationTime" TimeChanged="((TimeSpan? time) => UpdateCalculationTime(time))" Placeholder='@DateTime.Now.TimeOfDay.ToString("hh\\:mm")' Label="Calculation Time" AutoClose="true" ShowToolbar="false" Margin="Margin.Dense">
+									<PickerActions>
+										<MudButton Class="mr-auto align-self-start" OnClick="@(() => _calculationTimePicker.ClearAsync())">Clear</MudButton>
+										<MudButton OnClick="@(() => _calculationTimePicker.CloseAsync(false))">Clear</MudButton>
+										<MudButton Color="Color.Primary" OnClick="@(() => _calculationTimePicker.CloseAsync())">Ok</MudButton>
+									</PickerActions>
+								</MudTimePicker>
+							</div>
+    @*
+        														*@
+
+						</MudFocusTrap>
+
+						<MudField Label="Calculated Activity" ChildContent="@_calculatedActivityContent" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentText="@_isotopeDecay.ActivityUnit.ToString()" Class="flex-auto"></MudField>
+
+						<MudButton Class="flex-auto" Variant="Variant.Filled" OnClick="ResetFields">Reset</MudButton>
+
+					</MudStack>
+				</MudPaper>
+			</MudTabPanel>
+
+                <MudTabPanel Text="Timed Decay">
+                    <MudPaper MinWidth="600px" MinHeight="600px" Class="pa-4"></MudPaper>
+                </MudTabPanel>
+            </MudTabs>
+        </MudItem>
+
+        <MudFlexBreak/>
+        <MudItem>
+            <MudPaper MinWidth="300px" MaxWidth="600px" Class="pa-4">
+                <h1>Isotope Decay</h1>
+                <p>
+                    Compute the remaining quantity of a radioactive substance based on its initial amount, half-life, and elapsed time. It uses the exponential decay formula to predict the decayed amount over time, essential for understanding radioactive decay rates.
+                </p>
+            </MudPaper>
+        </MudItem>
+    </MudStack>
+</MudContainer>
+
+
+@code {
+    // TODO: fix _isIsotopeSelectionVisible so half-life does not update when the time unit is changed without it having a value
+    // TODO: fix the double formatting method
+    // TODO: increase upper limit on activity
+
+    private int Spacing { get; set; } = 3;
+
+    private bool _isIsotopeSelectionVisible = false;
+
+    private MudDatePicker _originalDatePicker;
+    private MudTimePicker _originalTimePicker;
+
+    private MudDatePicker _calculationDatePicker;
+    private MudTimePicker _calculationTimePicker;
+
+    RenderFragment? _calculatedActivityContent;
+
+    IsotopeDecay _isotopeDecay = new();
+
+    double? _halfLife;
+    double? _originalActivity;
+    DateTime? _originalDate;
+    TimeSpan? _originalTime;
+    DateTime? _calculationDate;
+    TimeSpan? _calculationTime;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        if (_isIsotopeSelectionVisible)
+            UpdateHalfLife(useDefaultHalfLife: true);
+    }
+
+    private void UpdateActivityUnit(Units.ActivityUnit unit)
+    {
+        _isotopeDecay.ActivityUnit = unit;
+
+        UpdateOriginalActivity(onlyActivityUnitChanged: true);
+        UpdateCalculatedActivityRenderFragment();
+
+        StateHasChanged();
+    }
+
+    private void UpdateTimeSpanUnit(Units.TimeUnit? value = null)
+    {
+        _isotopeDecay.TimeSpanUnit = value ?? _isotopeDecay.Isotope.PreferredHalfLifeUnit;
+
+        UpdateHalfLife();
+        StateHasChanged();
+    }
+
+    private void UpdateIsotopesSwitch(bool value)
+    {
+        if (value)
+            UpdateHalfLife(useDefaultHalfLife: true);
+
+        _isIsotopeSelectionVisible = value;
+    }
+
+    private void UpdateElement(string value)
+    {
+        _isotopeDecay.ElementName = value;
+        _isotopeDecay.ElementIsotopes = IsotopeDecay.Isotopes.FirstOrDefault(x => x.Key == _isotopeDecay.ElementName).Value;
+
+        UpdateIsotope(elementHasChanged: true);
+        StateHasChanged();
+    }
+
+    private void UpdateIsotope(bool elementHasChanged = false, string? value = null)
+    {
+        if (elementHasChanged == true)
+            _isotopeDecay.Isotope = _isotopeDecay.ElementIsotopes.First();
+        else
+            _isotopeDecay.Isotope = _isotopeDecay.ElementIsotopes.First(x => x.Name == value);
+
+        UpdateTimeSpanUnit();
+        UpdateHalfLife(useDefaultHalfLife: true);
+        CalculateEstimatedActivity();
+        StateHasChanged();
+    }
+
+    private void UpdateHalfLife(bool useDefaultHalfLife = false, bool halfLifeChanged = false, double? value = null)
+    {
+        if (useDefaultHalfLife == true)
+        {
+            _isotopeDecay.HalfLife = _isotopeDecay.Isotope.HalfLife;
+        }
+        else if (halfLifeChanged == true)
+        {
+            if (value == null)
+                _isotopeDecay.HalfLife = null;
+            else
+                try
+                {
+                    var adjustedValue = Math.Max((double)value, 0.0);
+
+                    _isotopeDecay.HalfLife = _isotopeDecay.TimeSpanUnit switch
+                    {
+                        Units.TimeUnit.Seconds => Duration.FromSeconds(adjustedValue),
+                        Units.TimeUnit.Minutes => Duration.FromMinutes(adjustedValue),
+                        Units.TimeUnit.Hours => Duration.FromHours(adjustedValue),
+                        Units.TimeUnit.Days => Duration.FromDays(adjustedValue),
+                        Units.TimeUnit.Years => Duration.FromDays(adjustedValue * 365.25),
+                        _ => _isotopeDecay.HalfLife
+                    };
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    _isotopeDecay.HalfLife = Duration.MaxValue;
+                }
+        }
+
+        _halfLife = _isotopeDecay.TimeSpanUnit switch
+        {
+            Units.TimeUnit.Seconds => _isotopeDecay.HalfLife?.TotalSeconds,
+            Units.TimeUnit.Minutes => _isotopeDecay.HalfLife?.TotalMinutes,
+            Units.TimeUnit.Hours => _isotopeDecay.HalfLife?.TotalHours,
+            Units.TimeUnit.Days => _isotopeDecay.HalfLife?.TotalDays,
+            Units.TimeUnit.Years => _isotopeDecay.HalfLife?.TotalDays / 365.25,
+            _ => _halfLife
+        };
+
+        _halfLife = FormatDouble(_halfLife);
+
+        CalculateEstimatedActivity();
+        StateHasChanged();
+    }
+
+    private void UpdateOriginalActivity(bool onlyActivityUnitChanged = false, double? value = null)
+    {
+        if (onlyActivityUnitChanged is false)
+            _isotopeDecay.OriginalActivity.SetValue(value, _isotopeDecay.ActivityUnit);
+
+        _originalActivity = _isotopeDecay.OriginalActivity.GetValue(_isotopeDecay.ActivityUnit);
+        _originalActivity = FormatDouble(_originalActivity);
+
+        CalculateEstimatedActivity();
+        StateHasChanged();
+    }
+
+    private void UpdateOriginalDate(DateTime? date)
+    {
+        _isotopeDecay.OriginalDate = date;
+        _originalDate = _isotopeDecay.OriginalDate;
+
+        CalculateEstimatedActivity();
+        StateHasChanged();
+    }
+
+    private void UpdateOriginalTime(TimeSpan? time)
+    {
+        _isotopeDecay.OriginalTime = time;
+        _originalTime = _isotopeDecay.OriginalTime;
+
+        CalculateEstimatedActivity();
+        StateHasChanged();
+    }
+
+    private void UpdateCalculationDate(DateTime? date)
+    {
+        _isotopeDecay.CalculationDate = date;
+        _calculationDate = _isotopeDecay.CalculationDate;
+
+        CalculateEstimatedActivity();
+        StateHasChanged();
+    }
+
+    private void UpdateCalculationTime(TimeSpan? time)
+    {
+        _isotopeDecay.CalculationTime = time;
+        _calculationTime = _isotopeDecay.CalculationTime;
+
+        CalculateEstimatedActivity();
+        StateHasChanged();
+    }
+
+    private void ResetFields()
+    {
+        _isotopeDecay = new();
+
+        _halfLife = null;
+        _originalActivity = null;
+        _originalDate = null;
+        _originalTime = null;
+        _calculationDate = null;
+        _calculationTime = null;
+
+        CalculateEstimatedActivity();
+    }
+
+    private void CalculateEstimatedActivity(bool activityUnitUpdated = false)
+    {
+        if (activityUnitUpdated is true)
+        {
+        }
+        else if (CalculatorHasAnyNullFields() is false)
+        {
+            DateTime originalDateTime = CombineDateTime(_isotopeDecay.OriginalDate, _isotopeDecay.OriginalTime);
+            DateTime calculationDateTime = CombineDateTime(_isotopeDecay.CalculationDate, _isotopeDecay.CalculationTime);
+            double timeDifference = (calculationDateTime - originalDateTime).TotalSeconds;
+
+            double decayConstant = Math.Log(2) / (_isotopeDecay.HalfLife.GetValueOrDefault().TotalSeconds);
+
+            _isotopeDecay.CalculatedActivity.SetValue((_isotopeDecay.OriginalActivity.GetValue()) * Math.Exp(-decayConstant * timeDifference));
+
+            UpdateCalculatedActivityRenderFragment();
+        }
+    }
+
+    private bool CalculatorHasAnyNullFields()
+    {
+        foreach (var property in _isotopeDecay.GetType().GetProperties())
+        {
+            if (property.Name == nameof(_isotopeDecay.CalculatedActivity))
+                continue;
+
+            var value = property.GetValue(_isotopeDecay);
+
+            if (property.Name == nameof(_isotopeDecay.OriginalActivity) || property.Name == nameof(_isotopeDecay.CalculatedActivity))
+            {
+                var activity = value as Activity;
+                if (activity != null && !activity.IsValueInitialized())
+                    return true;
+            }
+
+            if (value == null)
+                return true;
+        }
+
+        return false;
+    }
+
+    // Helper method to combine DateTime and TimeSpan into a single DateTime
+    private DateTime CombineDateTime(DateTime? date, TimeSpan? time)
+    {
+        if (!date.HasValue | !time.HasValue)
+        {
+            throw new ArgumentException("Date and Time must have values.");
+        }
+
+        return date!.Value.Date.Add(time!.Value);
+    }
+
+    // Helper method to update the Calculated Activity Render Fragment
+    private void UpdateCalculatedActivityRenderFragment()
+    {
+        double? calculatedActivity = _isotopeDecay.CalculatedActivity.GetValue(_isotopeDecay.ActivityUnit);
+
+        _calculatedActivityContent = @<MudText Typo="Typo.h6">@FormatDouble(calculatedActivity)</MudText>;
+    }
+
+    // Helper method to format double values
+    private static double? FormatDouble(double? value)
+    {
+        double? result = value switch
+        {
+            null => null,
+            >= 10000 => Math.Round(value.Value, 2),
+            (< 10000 and >= 0.0001) => Math.Round(value.Value, 5),
+            _ => value
+        };
+
+        return result;
+    }
+
+}
