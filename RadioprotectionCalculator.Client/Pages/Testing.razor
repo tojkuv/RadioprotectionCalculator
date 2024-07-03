@@ -1,0 +1,26 @@
+﻿@* @page "/"
+@rendermode InteractiveServer
+
+<MudSelect @bind-Value="@timeUnit"
+		   Variant="Variant.Outlined"
+		   Label="TimeUnit"
+		   AnchorOrigin="Origin.BottomCenter"
+		   Placeholder="Select Time Unit"
+		   Immediate>
+	@foreach (var item in Enum.GetValues(typeof(TimeUnit)))
+	{
+		<MudSelectItem Value="@((TimeUnit?)item)">@item</MudSelectItem>
+	}
+</MudSelect>
+@code {
+	TimeUnit? timeUnit = null;
+
+	public enum TimeUnit
+	{
+		Minutes,
+		Hours,
+		Days,
+		Years,
+		Seconds
+	}
+} *@
