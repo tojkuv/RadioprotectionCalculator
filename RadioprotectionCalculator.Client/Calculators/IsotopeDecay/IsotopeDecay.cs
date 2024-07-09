@@ -9,13 +9,11 @@ public class IsotopeDecay
 	public Isotope Isotope { get; set; } = Isotopes.Values.First().First();
 	public Units.ActivityUnit ActivityUnit { get; set; } = Units.ActivityUnit.GBq;
 	public Units.TimeUnit TimeSpanUnit { get; set; } = Isotopes.Values.First().First().PreferredHalfLifeUnit;
-	public Duration? HalfLife { get; set; } = Isotopes.Values.First().First().HalfLife;
+	public Duration? HalfLife { get; set; }
 	public Activity OriginalActivity { get; set; } = new();
 	public Activity CalculatedActivity { get; set; } = new();
 	public DateTime? OriginalDate { get; set; }
-	public TimeSpan? OriginalTime { get; set; }
 	public DateTime? CalculationDate { get; set; }
-	public TimeSpan? CalculationTime { get; set; }
 	public static Dictionary<string, List<Isotope>> Isotopes { get; set; } = new Dictionary<string, List<Isotope>>
 	{
 		{ "Fluorine (F)", new List<Isotope> { new Isotope { Name = "F-18", HalfLife = Duration.FromMinutes(119), PreferredHalfLifeUnit = Units.TimeUnit.Minutes }, new Isotope { Name = "F-19", HalfLife = Duration.FromMinutes(119), PreferredHalfLifeUnit = Units.TimeUnit.Minutes } } },
